@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="-1" guice-stage="DEVELOPMENT" name="Failed suite [Suite]">
+  <parameter name="browserName" value="firefox"/>
+  <test name="Test(failed)">
+    <parameter name="login.user" value="karthiga"/>
+    <parameter name="appURL" value="http://blc.test.as2116.net/blc/client/#/login"/>
+    <parameter name="login.password" value="karthiga12123"/>
+    <classes>
+      <class name="com.techm.application.BaseWebDriver">
+        <methods>
+          <include name="type"/>
+          <include name="initializeLocatorRead"/>
+          <include name="open"/>
+          <include name="initializeDriver"/>
+          <include name="initializeAppRead"/>
+        </methods>
+      </class> <!-- com.techm.application.BaseWebDriver -->
+      <class name="com.techm.code.BLCLogin">
+        <methods>
+          <include name="Login"/>
+          <include name="type"/>
+          <include name="initializeLocatorRead"/>
+          <include name="open"/>
+          <include name="initializeDriver"/>
+          <include name="initializeAppRead"/>
+        </methods>
+      </class> <!-- com.techm.code.BLCLogin -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->
