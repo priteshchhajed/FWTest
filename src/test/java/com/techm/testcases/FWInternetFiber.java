@@ -22,7 +22,7 @@ public class FWInternetFiber {
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-			System.out.println("Initialize method fails due to  an error" +e);
+			System.out.println("Initialize method fails due to an error" +e);
 		}
 	}
 	
