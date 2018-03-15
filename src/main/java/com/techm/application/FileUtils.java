@@ -1,6 +1,5 @@
 package com.techm.application;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,75 +8,60 @@ import java.util.Properties;
 
 public class FileUtils {
 	
-	public static String getPreoprty(String key) {
-		return null;
-	}
-	
-	
-	public static Properties locatorFileRead() throws IOException
-	{
-		File file = new File("C:/Users/PC00467497/workspace/TestBLCMaven/src/test/resources/Locators.properties");
-		
-		FileInputStream fileInput = null;
-		
-		Properties blcLocatorProperties = new Properties();
-		
-		try {
-			fileInput = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("File not found with an error"+e);
-		}
-		
-		try
-		{
-			blcLocatorProperties.load(fileInput);
-			//System.out.println("Locator File is Loaded successfully");
-		}catch(IOException e)
-		{
-			e.printStackTrace();
-			System.out.println("File is not uploaded due to an error"+e);
-		}
-		
-		
-		return blcLocatorProperties;
-		
-	}
-	
-	
 	public static Properties applicationFileRead()
 	{
-		File file = new File("C:/Users/PC00467497/workspace/TestBLCMaven/src/test/resources/application.properties");
+		
+		File file = new File("C:/Users/PC00467497/workspace/TestFiberWeb/src/main/resources/application.properties");
 		
 		FileInputStream fileInput = null;
 		
-		Properties blcAppProperties =  new Properties();
+		Properties FWAppProperties = new Properties();
 		
 		try {
 			fileInput = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("File not found with an error"+e);
+			System.out.println("File is not found" +e);
 		}
 		
 		try {
-			blcAppProperties.load(fileInput);
-			//System.out.println("Application File is Loaded successfully");
+			FWAppProperties.load(fileInput);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("File is not uploaded due to an error"+e);
+			System.out.println("File is not loaded properly" +e);
 		}
 		
-	
-		return blcAppProperties;
 		
+		return FWAppProperties;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(applicationFileRead().getProperty("application.url"));
+	public static Properties locatorFileRead()
+	{
+		File file = new File("C:/Users/PC00467497/workspace/TestFiberWeb/src/main/resources/locator.properties");
+		
+		FileInputStream fileInput = null;
+		
+		Properties FWLocatorProperties = new Properties();
+		
+		try {
+			fileInput = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("File is not found" +e);
+		}
+		
+		try {
+			FWLocatorProperties.load(fileInput);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("File is not loaded properly" +e);
+		}
+		
+		return FWLocatorProperties;
 	}
 	
 }

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-
-//import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,81 +14,123 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.thoughtworks.selenium.condition.Presence;
+
 public class BaseWebDriver {
 	
+	protected WebDriver driver = null;
 	
-	protected WebDriver driver;
-
-	protected Properties blcAppProperties;
+	protected Properties FWAppProperties;
 	
-	protected Properties blcLocatorProperties;
-  
-	public void initializeDriver(String browserName) {
-		
-		//String browserName="firefox";
-		if(browserName.equalsIgnoreCase("firefox")) {
+	protected Properties FWLocProperties;
+	
+	
+	
+	
+	public WebDriver initializeDriver(String browserName)
+	{
+		if(browserName.equalsIgnoreCase("firefox"))
+		{
 			driver = new FirefoxDriver();
 		}
-		else if(browserName.equalsIgnoreCase("Chrome"))
-		{
-			driver = new ChromeDriver();
-		}
-		else
+		else if(browserName.equalsIgnoreCase("Internet Explorer"))
 		{
 			driver = new InternetExplorerDriver();
 		}
-		
-	}	
-	
-	public void initialize() throws IOException
-	{
-		initializeAppRead();
-		initializeLocatorRead();
-		String browserName=getAppProperty("browser.name");
-		initializeDriver(browserName);
-	}
-	
-  //@BeforeTest
-  //@Parameters({"browserName","appURL"})
-  public void open() {
-	 
-	  String appURL = getAppProperty("application.url");
-	  try {
-		
-		driver.get(appURL);
-		driver.getPageSource();
-		driver.manage().window().maximize();
-		
-		//System.out.println("Browser opened successfully");
-		
-		}catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Browser could not open due to error: " + e);
+		else
+		{
+			driver = new ChromeDriver();
 		}
+		
+		return driver;
 	}
-  
-  
- 
-  public void initializeAppRead(){
-	  blcAppProperties = FileUtils.applicationFileRead();
-  }
-   
+	
+	public void initialize()
+	{
+		initializeAppReadFile();
+		initializeLocReadFile();
+		
+		//String browserName = getAppProperty("browser.name");
+		
+		String browserName = FWAppProperties.getProperty("browser.name");
+		
+		initializeDriver(browserName);
+		
+	}
 
-  public void initializeLocatorRead() throws IOException{
-	  blcLocatorProperties = FileUtils.locatorFileRead();
-  }
-  
-  public WebElement getElement(String locator) throws IOException {
-		WebElement element = null;
-		String[] keyValue = null;
-		try{
-			keyValue = blcLocatorProperties.getProperty(locator).split(Pattern.quote("|"));
+	public String getAppProperty(String propertyName) {
+		// TODO Auto-generated method stub
+		
+		String element =null;
+		try
+		{
+			element= FWAppProperties.getProperty(propertyName);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("Element is not found due to an error" +e);
+		}
+		
+		return element;
+	}
+
+	private void initializeLocReadFile() {
+		// TODO Auto-generated method stub
+		
+		FWAppProperties = FileUtils.applicationFileRead();
+	}
+
+	private void initializeAppReadFile() {
+		// TODO Auto-generated method stub
+		
+		FWLocProperties = FileUtils.locatorFileRead();
+	}
+
+	public void open()
+	{
+		String element = getAppProperty("fw.url");
+		try
+		{
+			driver.get(element);
+			driver.getPageSource();
+			driver.manage().window().maximize();
 		}catch(Exception e)
 		{
-			System.out.println("Get Property failed due to an error"+e);
+			e.printStackTrace();
+			System.out.println("Browser could not open due to an error" +e);
 		}
-		if(keyValue[0].equalsIgnoreCase("id")) {
-			element =driver.findElement(By.id(keyValue[1]));
+	}
+	
+	private WebElement getElement(String locator) {
+		
+		WebElement element = null;
+		String keyValue[] = null;
+		
+		try
+		{
+			keyValue=FWLocProperties.getProperty(locator).split(Pattern.quote("|"));
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("Element is not properly defined" +e);
+		}
+		
+		element = getLocatorElement(keyValue);
+		
+		return element;
+	}
+
+	private WebElement getLocatorElement(String[] keyValue) {
+		// TODO Auto-generated method stub
+		WebElement element = null;
+		if(keyValue[0].equalsIgnoreCase("id"))
+		{
+			element = driver.findElement(By.id(keyValue[1]));
+		}
+		else if(keyValue[0].equalsIgnoreCase("Xpath"))
+		{
+			element = driver.findElement(By.xpath(keyValue[1]));
 		}
 		else if(keyValue[0].equalsIgnoreCase("name"))
 		{
@@ -106,137 +146,88 @@ public class BaseWebDriver {
 		}
 		else if(keyValue[0].equalsIgnoreCase("class"))
 		{
-			element=driver.findElement(By.className(keyValue[1]));
-		}
-		else if (keyValue[0].equalsIgnoreCase("XPath"))
-		{
-			element=driver.findElement(By.xpath(keyValue[1]));
-		}
-		else if (keyValue[0].equalsIgnoreCase("cssSelector"))
-		{
-			element = driver.findElement(By.cssSelector(keyValue[1]));
+			element = driver.findElement(By.className(keyValue[1]));
 		}
 		else
 		{
-			System.out.println("Please enter a valid locator");
-			
+			System.out.println("Please enter valid locator");
 		}
-			return element;
-	}
 	
-  
-    
-	public void type(String locator, String text) {
-		try {
-		WebElement element = getElement(locator);
-		element.sendKeys(text);
-		}catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
+		return element;
 	}
-    
-    
-    public void click(String locator)
+
+	public void click(String locator)
 	{
-		try {
+		try
+		{
 			WebElement element = getElement(locator);
 			element.click();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}catch(Exception e)
+		{
 			e.printStackTrace();
 		}
-		
 	}
 	
-    public void clickonText(String text)
-    {
-    	WebElement element = driver.findElement(By.linkText(text));
-    	element.click();
-    }
+	public void clickLocator(String locator)
+	{
+		try
+		{
+			String[] keyValue = locator.split(Pattern.quote("|"));
+			WebElement element = getLocatorElement(keyValue);
+			element.click();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void type(String locator, String text)
+	{
+		try
+		{
+			WebElement element = getElement(locator);
+			element.sendKeys(text);
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public void submit(String locator)
 	{
-		try {
+		try
+		{
 			WebElement element = getElement(locator);
 			element.submit();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}catch(Exception e)
+		{
 			e.printStackTrace();
 		}
-		
 	}
 	
-	
-	public String getAppProperty(String propertyName)
+	public void selectText(String locator, String text)
 	{
-		//String element = BLCAppProperties.getProperty(propertyName);
-		String element=null;
-		try
-		{
-			element = blcAppProperties.getProperty(propertyName);			
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			System.out.println("This method fails due to an error" + e);
-		}
+		WebElement element = null;		
+		element = getElement(locator);
 		
-		
-		return element;
-		
+		Select selectText = new Select(element);
+		selectText.selectByVisibleText(text);
 	}
 	
-	
-	public String getLocatorProperty(String propertyName) throws IOException
+	public void selectIndex(String locator, Integer number)
 	{
-		String element = null;
-		try
-		{
-			element = blcLocatorProperties.getProperty(propertyName);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			System.out.println("This method fails due to an error" +e);
-		}
-		
-		return element;
-	}
-	
-	public void selectText(String locator, String text){
 		WebElement element = null;		
-		try {
-			element = getElement(locator);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Select select = new Select(element);
-		select.selectByVisibleText(text);
+		element = getElement(locator);
 		
+		Select selectText = new Select(element);
+		selectText.selectByIndex(number);
 	}
 	
-	public void selectIndex(String locator){
-		WebElement element = null;		
-		try {
-			element = getElement(locator);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Select select = new Select(element);
-		select.selectByIndex(1);
-		
-	}
-	
-	public void webRefresh()
+	public void pageRefresh()
 	{
 		driver.navigate().refresh();
 	}
 	
-	/*public void waitImplicit()
-	{
-		driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
-	}*/
 	public void waitExplicit(String locator)
 	{
 		String element=valueofLocator(locator);
@@ -262,24 +253,74 @@ public class BaseWebDriver {
 		{
 			wait.until(ExpectedConditions.elementToBeClickable(By.partialLinkText(element)));
 		}
-	    
 	}
 	
-	public String locatorValue(String locator)
+	public void waitElement(String locator)
 	{
-		String[] keyValue = blcLocatorProperties.getProperty(locator).split(Pattern.quote("|"));
+		String element=valueofLocator(locator);
+		String elementLocator= locatorValue(locator);
+		WebDriverWait wait = new WebDriverWait(driver,40);
+		if(elementLocator.equalsIgnoreCase("id"))
+		{
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(element)));
+		}
+		else if(elementLocator.equalsIgnoreCase("XPath"))
+		{
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(element)));
+		}
+		else if(elementLocator.equalsIgnoreCase("name"))
+		{
+			wait.until(ExpectedConditions.elementToBeClickable(By.name(element)));
+		}
+		else if(elementLocator.equalsIgnoreCase("linkText"))
+		{
+			wait.until(ExpectedConditions.elementToBeClickable(By.linkText(element)));
+		}
+		else if(elementLocator.equalsIgnoreCase("partialLinkText"))
+		{
+			wait.until(ExpectedConditions.elementToBeClickable(By.partialLinkText(element)));
+		}
+	}
+
+	private String locatorValue(String locator) {
+		// TODO Auto-generated method stub
+		String keyValue[]=null;
+		
+		keyValue = FWLocProperties.getProperty(locator).split(Pattern.quote("|"));
 		
 		return keyValue[0];
 	}
-	
-	public String valueofLocator(String locator)
-	{	
-		//locator=BLCLocatorProperties.getProperty("login.username");
-		
-		String[] keyValue = blcLocatorProperties.getProperty(locator).split(Pattern.quote("|"));
-		
+
+	private String valueofLocator(String locator) {
+		// TODO Auto-generated method stub
+		String keyValue[]=null;
+		try
+		{
+			keyValue = FWLocProperties.getProperty(locator).split(Pattern.quote("|"));
+			
+		}catch(Exception e)
+		{
+			System.out.println("Get Property failed due to e"+e);
+		}
 		
 		return keyValue[1];
 	}
+	
+	public String getLocatorProperty(String propertyName) throws IOException
+	{
+		String element = null;
+		try
+		{
+			element = FWLocProperties.getProperty(propertyName);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("This method fails due to an error" +e);
+		}
+		
+		return element;
+	}
+	
 	
 }
