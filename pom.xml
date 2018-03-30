@@ -4,18 +4,16 @@
   <artifactId>TestFiberWeb</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>TestBLCMaven</name>
- <dependencies> 
-<dependency>
-<groupId>io.github.bonigarcia</groupId>
-<artifactId>webdrivermanager</artifactId>
-<version>1.5.1</version>
-  <exclusions>
-    <exclusion>
-       <groupId>com.google.guava</groupId>
-       <artifactId>guava</artifactId>
-    </exclusion>
-  </exclusions>
+  <dependencies>
+  <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-support</artifactId>
+        <version>3.0.1</version>
 </dependency>
-
+<dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>2.53.0</version>
+    </dependency>
   </dependencies>
 </project>
