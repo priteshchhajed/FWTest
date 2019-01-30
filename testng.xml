@@ -4,6 +4,7 @@
   <test thread-count="5" name="Test">
     <classes>
       <class name="com.techm.testcases.FWInternetFiber"/>
+      <class name="com.techm.testcases.FWInternetFiberAddON"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
