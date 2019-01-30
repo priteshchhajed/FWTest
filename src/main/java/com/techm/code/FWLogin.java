@@ -1,5 +1,10 @@
 package com.techm.code;
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import com.techm.application.BaseWebDriver;
 
 public class FWLogin {
@@ -11,10 +16,11 @@ public class FWLogin {
 		this.baseWebDriver=baseWebDriver;
 	}
 	
-	public void login()
+	public void login() 
 	{
 		
-		baseWebDriver.open();
+		//String appURL = baseWebDriver.getAppProperty("fw.url");
+		baseWebDriver.open("fw.url");
 		
 		baseWebDriver.waitExplicit("fw.userName");
 		
@@ -25,9 +31,11 @@ public class FWLogin {
 		baseWebDriver.type("fw.password", password);
 		
 		baseWebDriver.submit("fw.submit");
+		
+		
 	}
 	
-	public void changeUser()
+	public void changeUser() 
 	{
 		baseWebDriver.waitExplicit("fw.adminMenu");
 		
@@ -45,5 +53,27 @@ public class FWLogin {
 		baseWebDriver.click("fw.custWagonWheel");
 		
 		baseWebDriver.click("fw.changeCustomer");
+		
+	}
+	
+	public void WTFlogin()
+	{
+		//String appWTFURL = baseWebDriver.getAppProperty("fw.WTFURL");
+		baseWebDriver.openNewTab("fw.WTFURL");
+		
+		baseWebDriver.waitExplicit("fw.WTFLoginButton");
+		baseWebDriver.click("fw.WTFLoginButton");
+		
+		baseWebDriver.waitExplicit("fw.WTFUserName");
+		
+		String userName = baseWebDriver.getAppProperty("fw.WTFUserName");
+		baseWebDriver.type("fw.WTFUserName", userName);
+		
+		String password = baseWebDriver.getAppProperty("fw.WTFPassword");
+		baseWebDriver.type("fw.WTFPassword", password);
+		
+		baseWebDriver.submit("fw.WTFLoginEnter");
+		
+		
 	}
 }

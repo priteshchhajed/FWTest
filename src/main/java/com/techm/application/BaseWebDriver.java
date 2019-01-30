@@ -1,20 +1,29 @@
 package com.techm.application;
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
+//import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.thoughtworks.selenium.condition.Presence;
 
 public class BaseWebDriver {
 	
@@ -57,6 +66,30 @@ public class BaseWebDriver {
 		initializeDriver(browserName);
 		
 	}
+	
+	public void javaScript()
+	{
+		JavascriptExecutor js = (JavascriptExecutor)driver;
+		WebElement element = driver.findElement(By.xpath("//input[@class='btn-call-to-action']"));
+		js.executeScript("window.scrollTo(" + element.getLocation().x + "," +(element.getLocation().y- 100) + ");");
+		element.click();
+	}
+	
+	public void javaScriptSummary()
+	{
+		JavascriptExecutor js = (JavascriptExecutor)driver;
+		WebElement element = driver.findElement(By.xpath("//a[@class='btn-call-to-action']"));
+		js.executeScript("window.scrollTo(" + element.getLocation().x + "," +(element.getLocation().y- 100) + ");");
+		element.click();
+	}
+	
+	/*public void screenShot() throws IOException
+	{
+		//Code to capture the screen shot
+		File srcFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+		//Code to copy the screen shot in the desired location
+		//FileUtils.copyFile(srcFile, new File("C:\\Users\\PC00467497\\Desktop\\SeleniumScreenshots\\google.jpg"));
+	}*/
 
 	public String getAppProperty(String propertyName) {
 		// TODO Auto-generated method stub
@@ -78,23 +111,25 @@ public class BaseWebDriver {
 	private void initializeLocReadFile() {
 		// TODO Auto-generated method stub
 		
-		FWAppProperties = FileUtils.applicationFileRead();
+		//FWAppProperties = FileUtils.applicationFileRead();
+		FWAppProperties = FileUtilsClass.applicationFileRead();
 	}
 
 	private void initializeAppReadFile() {
 		// TODO Auto-generated method stub
 		
-		FWLocProperties = FileUtils.locatorFileRead();
+		FWLocProperties = FileUtilsClass.locatorFileRead();
 	}
 
-	public void open()
+	public void open(String appURL)
 	{
-		String element = getAppProperty("fw.url");
+		String element = getAppProperty(appURL);
 		try
 		{
 			driver.get(element);
 			driver.getPageSource();
 			driver.manage().window().maximize();
+			
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -102,7 +137,47 @@ public class BaseWebDriver {
 		}
 	}
 	
-	private WebElement getElement(String locator) {
+	public void openNewTab(String appURL)
+	{
+		String element = getAppProperty(appURL);
+		try
+		{		
+			//driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
+			
+			Robot rb = new Robot();
+			rb.keyPress(KeyEvent.VK_CONTROL);
+			rb.keyPress(KeyEvent.VK_T);
+			rb.keyRelease(KeyEvent.VK_CONTROL);
+			rb.keyRelease(KeyEvent.VK_T);
+			
+			driver.get(element);
+			driver.getPageSource();
+			driver.manage().window().maximize();
+			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("Browser could not open another application due to an error" +e);
+		}
+	}
+	
+	public String getTitle()
+	{
+		return driver.getTitle();
+	}
+	public void clear(String locator)
+	{
+		try
+		{
+			WebElement element = getElement(locator);
+			element.clear();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public WebElement getElement(String locator) {
 		
 		WebElement element = null;
 		String keyValue[] = null;
@@ -121,7 +196,7 @@ public class BaseWebDriver {
 		return element;
 	}
 
-	private WebElement getLocatorElement(String[] keyValue) {
+	public WebElement getLocatorElement(String[] keyValue) {
 		// TODO Auto-generated method stub
 		WebElement element = null;
 		if(keyValue[0].equalsIgnoreCase("id"))
@@ -154,6 +229,7 @@ public class BaseWebDriver {
 		}
 	
 		return element;
+		
 	}
 
 	public void click(String locator)
@@ -187,6 +263,38 @@ public class BaseWebDriver {
 		{
 			WebElement element = getElement(locator);
 			element.sendKeys(text);
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean validateTextBox(String locator)
+	{
+		try
+		{
+			WebElement element = getElement(locator);
+			String textValue = element.getText();
+			if(textValue.isEmpty())
+			{
+				return false;
+			}
+			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("The field is still empty with reason" + e);
+		}
+		return true;
+	}
+	
+	public void typeAndEnter(String locator, String orderNo)
+	{
+		try
+		{
+			WebElement element = getElement(locator);
+			element.sendKeys(orderNo);
+			element.sendKeys(Keys.ENTER);
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -255,6 +363,17 @@ public class BaseWebDriver {
 		}
 	}
 	
+	 public void dateSelect()
+	    {
+	        WebElement element = driver.findElement(By.xpath("//span[@class='yui-skin-sam']//parent::span//input"));
+	        Actions builder = new Actions(driver);
+	        Action seriesOfActions = builder
+	                .moveToElement(element)
+	                .click()
+	                .build();
+	        seriesOfActions.perform();
+	    }
+	
 	public void waitElement(String locator)
 	{
 		String element=valueofLocator(locator);
@@ -267,6 +386,7 @@ public class BaseWebDriver {
 		else if(elementLocator.equalsIgnoreCase("XPath"))
 		{
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(element)));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(element)));
 		}
 		else if(elementLocator.equalsIgnoreCase("name"))
 		{
@@ -322,5 +442,16 @@ public class BaseWebDriver {
 		return element;
 	}
 	
+	public void implicitWait()
+	{
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+	}
+
+	public void javaScriptMethod() {
+		// TODO Auto-generated method stub
+		JavascriptExecutor js = (JavascriptExecutor)driver;
+		WebElement element = driver.findElement(By.xpath("//input[@class='btn-call-to-action']"));
+		js.executeScript("window.scrollTo(" + element.getLocation().x + "," +(element.getLocation().y- 100) + ");");
+	}
 	
 }

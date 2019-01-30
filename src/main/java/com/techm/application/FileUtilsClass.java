@@ -6,12 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-public class FileUtils {
+public class FileUtilsClass {
 	
 	public static Properties applicationFileRead()
 	{
 		
-		File file = new File("C:/Users/PC00467497/workspace/TestFiberWeb/src/main/resources/application.properties");
+		File file = new File("C:/Users/PC00467497/Broadnet/workspace/TestFiberWeb/src/main/resources/application.properties");
 		
 		FileInputStream fileInput = null;
 		
@@ -39,7 +39,7 @@ public class FileUtils {
 	
 	public static Properties locatorFileRead()
 	{
-		File file = new File("C:/Users/PC00467497/workspace/TestFiberWeb/src/main/resources/locator.properties");
+		File file = new File("C:/Users/PC00467497/Broadnet/workspace/TestFiberWeb/src/main/resources/locator.properties");
 		
 		FileInputStream fileInput = null;
 		

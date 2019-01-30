@@ -1,6 +1,5 @@
 package com.techm.testcases;
 
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -9,10 +8,9 @@ import com.techm.code.FWInternetService;
 import com.techm.code.FWLogin;
 import com.techm.code.WTFValidation;
 
-public class FWInternetFiber {
-	
-	BaseWebDriver baseWebDriver;
-	String orderno=null;
+public class FWInternetFiberChangeSpeed {
+
+BaseWebDriver baseWebDriver;
 	
 	@BeforeTest
 	public void initalize()
@@ -30,19 +28,18 @@ public class FWInternetFiber {
 	}
 	
 	@Test
-	public void internetFiber() throws InterruptedException 
+	public void internetFiber() throws InterruptedException
 	{
 		FWLogin fwlogin = new FWLogin(baseWebDriver);
 		fwlogin.login();
 		fwlogin.changeUser();
 		
 		FWInternetService fwInternet = new FWInternetService(baseWebDriver);
-		String orderno=fwInternet.internetFiberCreate();
-		//String orderno = "5513336";
+		String orderNo = fwInternet.internetFiberChangeSpeed();
+		
 		fwlogin.WTFlogin();
 		
 		WTFValidation WTFvalidate = new WTFValidation(baseWebDriver);
-		WTFvalidate.WTFValidate(orderno);		
+		WTFvalidate.WTFValidate(orderNo);	
 	}
-	
 }
